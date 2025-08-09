@@ -392,15 +392,19 @@
 
         <div id="results" class="results">
             <div class="result-item">
-                <span class="result-label">Time in Seconds:</span>
+                <span class="result-label">Total Seconds:</span>
                 <span class="result-value" id="timeSeconds">-</span>
             </div>
             <div class="result-item">
-                <span class="result-label">Time in Hours (decimal):</span>
+                <span class="result-label">Total Hours:</span>
                 <span class="result-value" id="timeHours">-</span>
             </div>
             <div class="result-item">
-                <span class="result-label">Time in H:M:S format:</span>
+                <span class="result-label">Total Days:</span>
+                <span class="result-value" id="timeDays">-</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">Total Time:</span>
                 <span class="result-value" id="timeFormatted">-</span>
             </div>
         </div>
@@ -430,7 +434,26 @@
             { name: 'Sp', multiplier: 1e24, display: 'Sp' },
             { name: 'Oc', multiplier: 1e27, display: 'Oc' },
             { name: 'No', multiplier: 1e30, display: 'No' },
-            { name: 'De', multiplier: 1e33, display: 'De' }
+            { name: 'De', multiplier: 1e33, display: 'De' },
+            { name: 'UDe', multiplier: 1e36, display: 'UDe' },
+            { name: 'DDe', multiplier: 1e39, display: 'DDe' },
+            { name: 'TDe', multiplier: 1e42, display: 'TDe' },
+            { name: 'QaDe', multiplier: 1e45, display: 'QaDe' },
+            { name: 'QnDe', multiplier: 1e48, display: 'QnDe' },
+            { name: 'SxDe', multiplier: 1e51, display: 'SxDe' },
+            { name: 'SpDe', multiplier: 1e54, display: 'SpDe' },
+            { name: 'OcDe', multiplier: 1e57, display: 'OcDe' },
+            { name: 'NoDe', multiplier: 1e60, display: 'NoDe' },
+            { name: 'Vg', multiplier: 1e63, display: 'Vg' },
+            { name: 'UVg', multiplier: 1e66, display: 'UVg' },
+            { name: 'DVg', multiplier: 1e69, display: 'DVg' },
+            { name: 'TVg', multiplier: 1e72, display: 'TVg' },
+            { name: 'QaVg', multiplier: 1e75, display: 'QaVg' },
+            { name: 'QnVg', multiplier: 1e78, display: 'QnVg' },
+            { name: 'SxVg', multiplier: 1e81, display: 'SxVg' },
+            { name: 'SpVg', multiplier: 1e84, display: 'SpVg' },
+            { name: 'OcVg', multiplier: 1e87, display: 'OcVg' },
+            { name: 'NoVg', multiplier: 1e90, display: 'NoVg' }
         ];
 
         // Im going crazyyyyy token units anyway
@@ -512,13 +535,32 @@
             return Math.floor(number).toLocaleString();
         }
 
-        // Format time as H:M:S
-        function formatTime(seconds) {
-            const hours = Math.floor(seconds / 3600);
-            const minutes = Math.floor((seconds % 3600) / 60);
-            const remainingSeconds = Math.floor(seconds % 60);
+        // Format time with years, months, weeks, days, hours, minutes, seconds
+        function formatTime(totalSeconds) {
+            if (totalSeconds < 60) {
+                return `${Math.floor(totalSeconds)}s`;
+            }
+
+            const years = Math.floor(totalSeconds / 31536000); // 365 days
+            const months = Math.floor((totalSeconds % 31536000) / 2592000); // 30 days
+            const weeks = Math.floor((totalSeconds % 2592000) / 604800); // 7 days
+            const days = Math.floor((totalSeconds % 604800) / 86400); // 24 hours
+            const hours = Math.floor((totalSeconds % 86400) / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = Math.floor(totalSeconds % 60);
             
-            return `${hours}h ${minutes}m ${remainingSeconds}s`;
+            const parts = [];
+            
+            if (years > 0) parts.push(`${years}y`);
+            if (months > 0) parts.push(`${months}mo`);
+            if (weeks > 0) parts.push(`${weeks}w`);
+            if (days > 0) parts.push(`${days}d`);
+            if (hours > 0) parts.push(`${hours}h`);
+            if (minutes > 0) parts.push(`${minutes}m`);
+            if (seconds > 0) parts.push(`${seconds}s`);
+            
+            // Return the most significant 3-4 time units to avoid clutter
+            return parts.slice(0, 4).join(' ');
         }
 
         // Show error message
@@ -553,12 +595,14 @@
             
             // Format results
             const timeSeconds = formatWithCommas(timeInSeconds);
-            const timeHours = (timeInSeconds / 3600).toFixed(2);
+            const timeHours = formatWithCommas(Math.floor(timeInSeconds / 3600));
+            const timeDays = formatWithCommas(Math.floor(timeInSeconds / 86400));
             const timeFormatted = formatTime(timeInSeconds);
             
             // Update result values
             document.getElementById('timeSeconds').textContent = timeSeconds;
-            document.getElementById('timeHours').textContent = timeHours + ' hours';
+            document.getElementById('timeHours').textContent = timeHours;
+            document.getElementById('timeDays').textContent = timeDays;
             document.getElementById('timeFormatted').textContent = timeFormatted;
             
             // Show results
