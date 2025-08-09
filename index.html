@@ -32,14 +32,6 @@
             box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2), 
                         inset 0 1px 0 rgba(255, 255, 255, 0.3);
             backdrop-filter: blur(20px);
-            transform: translateY(0);
-            transition: transform 0.3s ease;
-        }
-
-        .container:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 
-                        inset 0 1px 0 rgba(255, 255, 255, 0.3);
         }
 
         h1 {
@@ -97,7 +89,6 @@
             background: rgba(255, 255, 255, 0.25);
             box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.2), 
                         0 8px 25px rgba(255, 107, 107, 0.15);
-            transform: translateY(-2px);
         }
 
         input[type="number"]::placeholder {
@@ -124,7 +115,6 @@
             background: rgba(255, 255, 255, 0.25);
             box-shadow: 0 0 0 4px rgba(107, 207, 127, 0.2),
                         0 8px 25px rgba(107, 207, 127, 0.15);
-            transform: translateY(-2px);
         }
 
         select option {
@@ -168,13 +158,8 @@
         }
 
         .calculate-btn:hover {
-            transform: translateY(-3px);
             box-shadow: 0 15px 40px rgba(255, 107, 107, 0.5);
             background: linear-gradient(135deg, #ff5252 0%, #ff7979 50%, #fd79a8 100%);
-        }
-
-        .calculate-btn:active {
-            transform: translateY(-1px);
         }
 
         .results {
@@ -190,18 +175,6 @@
 
         .results.show {
             display: block;
-            animation: fadeInUp 0.5s ease;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
         }
 
         .result-item {
