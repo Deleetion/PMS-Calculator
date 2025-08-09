@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Power Masters Simulator Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a0d1a;
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2), 
+                        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(20px);
+            transform: translateY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 
+                        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #ffffff;
+            font-size: 2.2rem;
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            letter-spacing: 0.5px;
+        }
+
+        .subtitle {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #b0bec5;
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #cfd8dc;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        input[type="number"] {
+            flex: 1;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            color: #ffffff;
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #ff6b6b;
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.2), 
+                        0 8px 25px rgba(255, 107, 107, 0.15);
+            transform: translateY(-2px);
+        }
+
+        input[type="number"]::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        select {
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            color: #ffffff;
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 130px;
+            backdrop-filter: blur(10px);
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #6bcf7f;
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 0 0 4px rgba(107, 207, 127, 0.2),
+                        0 8px 25px rgba(107, 207, 127, 0.15);
+            transform: translateY(-2px);
+        }
+
+        select option {
+            background: rgba(45, 55, 72, 0.95);
+            color: #ffffff;
+            padding: 10px;
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 50%, #ffa8a8 100%);
+            border: none;
+            border-radius: 20px;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 30px 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .calculate-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .calculate-btn:hover::before {
+            left: 100%;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(255, 107, 107, 0.5);
+            background: linear-gradient(135deg, #ff5252 0%, #ff7979 50%, #fd79a8 100%);
+        }
+
+        .calculate-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .results {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 30px;
+            display: none;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .results.show {
+            display: block;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-label {
+            color: #b0bec5;
+            font-weight: 500;
+        }
+
+        .result-value {
+            background: linear-gradient(45deg, #ff6b6b, #4d79ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .goal-reached {
+            text-align: center;
+            color: #66bb6a;
+            font-size: 1.2rem;
+            font-weight: 600;
+            padding: 20px;
+            background: rgba(102, 187, 106, 0.1);
+            border: 1px solid rgba(102, 187, 106, 0.3);
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .error {
+            text-align: center;
+            color: #ef5350;
+            font-size: 1rem;
+            font-weight: 500;
+            padding: 15px;
+            background: rgba(239, 83, 80, 0.1);
+            border: 1px solid rgba(239, 83, 80, 0.3);
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .input-row {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            input[type="number"], select {
+                width: 100%;
+            }
+
+            .result-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 15px;
+        }
+
+        .footer p {
+            color: #bdc3c7;
+            font-size: 0.9rem;
+            font-weight: 400;
+            margin: 0;
+            opacity: 0.8;
+        }
+
+        .calculator-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            justify-content: center;
+        }
+
+        .tab-btn {
+            padding: 15px 30px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tab-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .tab-btn:hover::before {
+            left: 100%;
+        }
+
+        .tab-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: #ffd93d;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 217, 61, 0.3);
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #ffd93d 0%, #ffb347 100%);
+            border-color: #ffd93d;
+            color: #333;
+            font-weight: 700;
+            box-shadow: 0 8px 25px rgba(255, 217, 61, 0.4);
+        }
+
+        .calculator-section {
+            animation: fadeInUp 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Power Masters Simulator Calculator</h1>
+
+        <!-- So uh calculator type changing thing ig -->
+        <div class="calculator-tabs">
+            <button type="button" class="tab-btn active" onclick="switchCalculator('power')">Power Calculator</button>
+            <button type="button" class="tab-btn" onclick="switchCalculator('tokens')">Token Calculator</button>
+        </div>
+
+        <!-- Power Calculator -->
+        <form id="powerCalculatorForm" class="calculator-section">
+            <div class="form-group">
+                <label for="currentAmount">Current Amount</label>
+                <div class="input-row">
+                    <input type="number" id="currentAmount" step="any" placeholder="e.g., 10" required>
+                    <select id="currentUnit"></select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="goalAmount">Goal Amount</label>
+                <div class="input-row">
+                    <input type="number" id="goalAmount" step="any" placeholder="e.g., 15" required>
+                    <select id="goalUnit"></select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="rateAmount">Rate per Second</label>
+                <div class="input-row">
+                    <input type="number" id="rateAmount" step="any" placeholder="e.g., 1" required>
+                    <select id="rateUnit"></select>
+                </div>
+            </div>
+
+            <button type="submit" class="calculate-btn">Calculate Time</button>
+        </form>
+
+        <!-- Token Calculator -->
+        <form id="tokenCalculatorForm" class="calculator-section" style="display: none;">
+            <div class="form-group">
+                <label for="currentTokens">Current Tokens</label>
+                <div class="input-row">
+                    <input type="number" id="currentTokens" step="any" placeholder="e.g., 6" required>
+                    <select id="currentTokenUnit"></select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="goalTokens">Goal Tokens</label>
+                <div class="input-row">
+                    <input type="number" id="goalTokens" step="any" placeholder="e.g., 6.5" required>
+                    <select id="goalTokenUnit"></select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="tokenRate">Tokens per Second</label>
+                <div class="input-row">
+                    <input type="number" id="tokenRate" step="any" placeholder="e.g., 680" required>
+                    <select id="tokenRateUnit"></select>
+                </div>
+            </div>
+
+            <button type="submit" class="calculate-btn">Calculate Time</button>
+        </form>
+
+        <div id="results" class="results">
+            <div class="result-item">
+                <span class="result-label">Time in Seconds:</span>
+                <span class="result-value" id="timeSeconds">-</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">Time in Hours (decimal):</span>
+                <span class="result-value" id="timeHours">-</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">Time in H:M:S format:</span>
+                <span class="result-value" id="timeFormatted">-</span>
+            </div>
+        </div>
+
+        <div id="goalReached" class="goal-reached" style="display: none;">
+            🎉 You already reached your goal! 🎉
+        </div>
+
+        <div id="error" class="error" style="display: none;"></div>
+
+        <div class="footer">
+            <p>Made by Deleetion</p>
+        </div>
+    </div>
+
+    <script>
+        // Units and their multipliers for power or wtv
+        const POWER_UNITS = [
+            { name: 'none', multiplier: 1, display: 'none' },
+            { name: 'K', multiplier: 1e3, display: 'K' },
+            { name: 'M', multiplier: 1e6, display: 'M' },
+            { name: 'B', multiplier: 1e9, display: 'B' },
+            { name: 'T', multiplier: 1e12, display: 'T' },
+            { name: 'Qa', multiplier: 1e15, display: 'Qa' },
+            { name: 'Qn', multiplier: 1e18, display: 'Qn' },
+            { name: 'Sx', multiplier: 1e21, display: 'Sx' },
+            { name: 'Sp', multiplier: 1e24, display: 'Sp' },
+            { name: 'Oc', multiplier: 1e27, display: 'Oc' },
+            { name: 'No', multiplier: 1e30, display: 'No' },
+            { name: 'De', multiplier: 1e33, display: 'De' }
+        ];
+
+        // Im going crazyyyyy token units anyway
+        const TOKEN_UNITS = [
+            { name: 'none', multiplier: 1, display: 'none' },
+            { name: 'K', multiplier: 1e3, display: 'K' },
+            { name: 'M', multiplier: 1e6, display: 'M' },
+            { name: 'B', multiplier: 1e9, display: 'B' }
+        ];
+
+        // How to switch between calculators
+        function switchCalculator(type) {
+            const powerForm = document.getElementById('powerCalculatorForm');
+            const tokenForm = document.getElementById('tokenCalculatorForm');
+            const powerBtn = document.querySelector('.tab-btn[onclick="switchCalculator(\'power\')"]');
+            const tokenBtn = document.querySelector('.tab-btn[onclick="switchCalculator(\'tokens\')"]');
+            
+            // Hide results when switching
+            hideResults();
+            
+            if (type === 'power') {
+                powerForm.style.display = 'block';
+                tokenForm.style.display = 'none';
+                powerBtn.classList.add('active');
+                tokenBtn.classList.remove('active');
+            } else {
+                powerForm.style.display = 'none';
+                tokenForm.style.display = 'block';
+                tokenBtn.classList.add('active');
+                powerBtn.classList.remove('active');
+            }
+        }
+
+        // Dropdown menus
+        function populateDropdowns() {
+            const powerDropdowns = ['currentUnit', 'goalUnit', 'rateUnit'];
+            const tokenDropdowns = ['currentTokenUnit', 'goalTokenUnit', 'tokenRateUnit'];
+            
+            // Power calculator dropdowns
+            powerDropdowns.forEach(dropdownId => {
+                const dropdown = document.getElementById(dropdownId);
+                if (dropdown) {
+                    dropdown.innerHTML = '';
+                    
+                    POWER_UNITS.forEach(unit => {
+                        const option = document.createElement('option');
+                        option.value = unit.name;
+                        option.textContent = unit.display;
+                        dropdown.appendChild(option);
+                    });
+                }
+            });
+
+            // Token calculator dropdowns
+            tokenDropdowns.forEach(dropdownId => {
+                const dropdown = document.getElementById(dropdownId);
+                if (dropdown) {
+                    dropdown.innerHTML = '';
+                    
+                    TOKEN_UNITS.forEach(unit => {
+                        const option = document.createElement('option');
+                        option.value = unit.name;
+                        option.textContent = unit.display;
+                        dropdown.appendChild(option);
+                    });
+                }
+            });
+        }
+
+        // convert units to a full number
+        function convertToBase(value, unitName, unitArray = POWER_UNITS) {
+            const unit = unitArray.find(u => u.name === unitName);
+            if (!unit) throw new Error(`Unknown unit: ${unitName}`);
+            return value * unit.multiplier;
+        }
+
+        // Format number with commas
+        function formatWithCommas(number) {
+            return Math.floor(number).toLocaleString();
+        }
+
+        // Format time as H:M:S
+        function formatTime(seconds) {
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const remainingSeconds = Math.floor(seconds % 60);
+            
+            return `${hours}h ${minutes}m ${remainingSeconds}s`;
+        }
+
+        // Show error message
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            const resultsDiv = document.getElementById('results');
+            const goalReachedDiv = document.getElementById('goalReached');
+            
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            resultsDiv.classList.remove('show');
+            goalReachedDiv.style.display = 'none';
+        }
+
+        // Hide error message
+        function hideError() {
+            document.getElementById('error').style.display = 'none';
+        }
+
+        // Hide all results
+        function hideResults() {
+            document.getElementById('results').classList.remove('show');
+            document.getElementById('goalReached').style.display = 'none';
+            document.getElementById('error').style.display = 'none';
+        }
+
+        // Show results
+        function showResults(timeInSeconds) {
+            const resultsDiv = document.getElementById('results');
+            const goalReachedDiv = document.getElementById('goalReached');
+            const errorDiv = document.getElementById('error');
+            
+            // Format results
+            const timeSeconds = formatWithCommas(timeInSeconds);
+            const timeHours = (timeInSeconds / 3600).toFixed(2);
+            const timeFormatted = formatTime(timeInSeconds);
+            
+            // Update result values
+            document.getElementById('timeSeconds').textContent = timeSeconds;
+            document.getElementById('timeHours').textContent = timeHours + ' hours';
+            document.getElementById('timeFormatted').textContent = timeFormatted;
+            
+            // Show results
+            resultsDiv.classList.add('show');
+            goalReachedDiv.style.display = 'none';
+            errorDiv.style.display = 'none';
+        }
+
+        // Show goal reached message
+        function showGoalReached() {
+            const resultsDiv = document.getElementById('results');
+            const goalReachedDiv = document.getElementById('goalReached');
+            const errorDiv = document.getElementById('error');
+            
+            resultsDiv.classList.remove('show');
+            goalReachedDiv.style.display = 'block';
+            errorDiv.style.display = 'none';
+        }
+
+        // Calculate time to goal for power
+        function calculatePowerTime() {
+            try {
+                hideError();
+                
+                // Get input values
+                const currentAmount = parseFloat(document.getElementById('currentAmount').value);
+                const currentUnit = document.getElementById('currentUnit').value;
+                const goalAmount = parseFloat(document.getElementById('goalAmount').value);
+                const goalUnit = document.getElementById('goalUnit').value;
+                const rateAmount = parseFloat(document.getElementById('rateAmount').value);
+                const rateUnit = document.getElementById('rateUnit').value;
+                
+                // Validate inputs
+                if (isNaN(currentAmount) || isNaN(goalAmount) || isNaN(rateAmount)) {
+                    throw new Error('Please enter valid numbers for all amount fields.');
+                }
+                
+                if (currentAmount < 0 || goalAmount < 0 || rateAmount < 0) {
+                    throw new Error('All values must be positive numbers.');
+                }
+                
+                if (rateAmount === 0) {
+                    throw new Error('Rate per second must be greater than 0.');
+                }
+                
+                // Convert all values to base units
+                const currentBase = convertToBase(currentAmount, currentUnit, POWER_UNITS);
+                const goalBase = convertToBase(goalAmount, goalUnit, POWER_UNITS);
+                const rateBase = convertToBase(rateAmount, rateUnit, POWER_UNITS);
+                
+                // Check if goal is already reached
+                if (currentBase >= goalBase) {
+                    showGoalReached();
+                    return;
+                }
+                
+                // Calculate time needed
+                const difference = goalBase - currentBase;
+                const timeInSeconds = difference / rateBase;
+                
+                // Validate result
+                if (timeInSeconds < 0 || !isFinite(timeInSeconds)) {
+                    throw new Error('Unable to calculate time. Please check your input values.');
+                }
+                
+                showResults(timeInSeconds);
+                
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+
+        // Calculate time to goal for tokens
+        function calculateTokenTime() {
+            try {
+                hideError();
+                
+                // Get input values
+                const currentTokens = parseFloat(document.getElementById('currentTokens').value);
+                const currentTokenUnit = document.getElementById('currentTokenUnit').value;
+                const goalTokens = parseFloat(document.getElementById('goalTokens').value);
+                const goalTokenUnit = document.getElementById('goalTokenUnit').value;
+                const tokenRate = parseFloat(document.getElementById('tokenRate').value);
+                const tokenRateUnit = document.getElementById('tokenRateUnit').value;
+                
+                // Validate inputs
+                if (isNaN(currentTokens) || isNaN(goalTokens) || isNaN(tokenRate)) {
+                    throw new Error('Please enter valid numbers for all token fields.');
+                }
+                
+                if (currentTokens < 0 || goalTokens < 0 || tokenRate < 0) {
+                    throw new Error('All values must be positive numbers.');
+                }
+                
+                if (tokenRate === 0) {
+                    throw new Error('Token rate per second must be greater than 0.');
+                }
+                
+                // Convert all values to base units
+                const currentBase = convertToBase(currentTokens, currentTokenUnit, TOKEN_UNITS);
+                const goalBase = convertToBase(goalTokens, goalTokenUnit, TOKEN_UNITS);
+                const rateBase = convertToBase(tokenRate, tokenRateUnit, TOKEN_UNITS);
+                
+                // Check if goal is already reached
+                if (currentBase >= goalBase) {
+                    showGoalReached();
+                    return;
+                }
+                
+                // Calculate time needed
+                const difference = goalBase - currentBase;
+                const timeInSeconds = difference / rateBase;
+                
+                // Validate result
+                if (timeInSeconds < 0 || !isFinite(timeInSeconds)) {
+                    throw new Error('Unable to calculate time. Please check your input values.');
+                }
+                
+                showResults(timeInSeconds);
+                
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            populateDropdowns();
+            
+            // Handle power calculator form submission
+            document.getElementById('powerCalculatorForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                calculatePowerTime();
+            });
+
+            // Handle token calculator form submission
+            document.getElementById('tokenCalculatorForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                calculateTokenTime();
+            });
+
+            // Handle input changes for real-time validation
+            document.querySelectorAll('input[type="number"]').forEach(input => {
+                input.addEventListener('input', function() {
+                    hideError();
+                });
+            });
+
+            // Handle keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                    e.preventDefault();
+                    // Calculate based on which form is currently visible
+                    const powerForm = document.getElementById('powerCalculatorForm');
+                    const tokenForm = document.getElementById('tokenCalculatorForm');
+                    
+                    if (powerForm.style.display !== 'none') {
+                        calculatePowerTime();
+                    } else if (tokenForm.style.display !== 'none') {
+                        calculateTokenTime();
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
