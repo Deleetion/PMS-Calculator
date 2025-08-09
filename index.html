@@ -125,21 +125,19 @@
 
         .calculate-btn {
             width: 100%;
-            padding: 18px;
-            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 50%, #ffa8a8 100%);
-            border: none;
+            padding: 15px 30px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.3);
             border-radius: 20px;
-            color: white;
-            font-size: 1.2rem;
-            font-weight: 700;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1rem;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            margin: 30px 0;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.4);
+            backdrop-filter: blur(10px);
             position: relative;
             overflow: hidden;
+            margin: 30px 0;
         }
 
         .calculate-btn::before {
@@ -149,7 +147,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
             transition: left 0.5s;
         }
 
@@ -158,8 +156,10 @@
         }
 
         .calculate-btn:hover {
-            box-shadow: 0 15px 40px rgba(255, 107, 107, 0.5);
-            background: linear-gradient(135deg, #ff5252 0%, #ff7979 50%, #fd79a8 100%);
+            background: rgba(255, 255, 255, 0.25);
+            border-color: #ffd93d;
+            color: white;
+            box-shadow: 0 8px 25px rgba(255, 217, 61, 0.3);
         }
 
         .results {
@@ -265,10 +265,7 @@
         }
 
         .calculator-tabs {
-            display: flex;
-            gap: 10px;
             margin-bottom: 30px;
-            justify-content: center;
         }
 
         .tab-btn {
@@ -325,11 +322,16 @@
 <body>
     <div class="container">
         <h1>Power Masters Simulator Calculator</h1>
-
-        <!-- So uh calculator type changing thing ig -->
+        
+        <!-- Calculator tabs in pyramid layout -->
         <div class="calculator-tabs">
-            <button type="button" class="tab-btn active" onclick="switchCalculator('power')">Power Calculator</button>
-            <button type="button" class="tab-btn" onclick="switchCalculator('tokens')">Token Calculator</button>
+            <div style="text-align: center; margin-bottom: 15px;">
+                <button type="button" class="tab-btn active" onclick="switchCalculator('power')">Power Calculator</button>
+            </div>
+            <div style="display: flex; gap: 15px; justify-content: center;">
+                <button type="button" class="tab-btn" onclick="switchCalculator('tokens')">Token Calculator</button>
+                <button type="button" class="tab-btn" onclick="switchCalculator('upgrade')">Tree Point Calculator</button>
+            </div>
         </div>
 
         <!-- Power Calculator -->
@@ -390,22 +392,39 @@
             <button type="submit" class="calculate-btn">Calculate Time</button>
         </form>
 
+        <!-- Upgrade Calculator -->
+        <form id="upgradeCalculatorForm" class="calculator-section" style="display: none;">
+            <div class="form-group">
+                <label for="totalPower">Total Power</label>
+                <div class="input-row">
+                    <input type="number" id="totalPower" step="any" placeholder="e.g., 10" required>
+                    <select id="powerUnit"></select>
+                </div>
+            </div>
+
+            <button type="submit" class="calculate-btn">Calculate Tree Points</button>
+        </form>
+
         <div id="results" class="results">
-            <div class="result-item">
+            <div class="result-item" id="timeSecondsItem">
                 <span class="result-label">Total Seconds:</span>
                 <span class="result-value" id="timeSeconds">-</span>
             </div>
-            <div class="result-item">
+            <div class="result-item" id="timeHoursItem">
                 <span class="result-label">Total Hours:</span>
                 <span class="result-value" id="timeHours">-</span>
             </div>
-            <div class="result-item">
+            <div class="result-item" id="timeDaysItem">
                 <span class="result-label">Total Days:</span>
                 <span class="result-value" id="timeDays">-</span>
             </div>
-            <div class="result-item">
+            <div class="result-item" id="timeFormattedItem">
                 <span class="result-label">Total Time:</span>
                 <span class="result-value" id="timeFormatted">-</span>
+            </div>
+            <div class="result-item" id="upgradePointsItem" style="display: none;">
+                <span class="result-label">Tree Points:</span>
+                <span class="result-value" id="upgradePoints">-</span>
             </div>
         </div>
 
@@ -468,28 +487,57 @@
         function switchCalculator(type) {
             const powerForm = document.getElementById('powerCalculatorForm');
             const tokenForm = document.getElementById('tokenCalculatorForm');
+            const upgradeForm = document.getElementById('upgradeCalculatorForm');
             const powerBtn = document.querySelector('.tab-btn[onclick="switchCalculator(\'power\')"]');
             const tokenBtn = document.querySelector('.tab-btn[onclick="switchCalculator(\'tokens\')"]');
+            const upgradeBtn = document.querySelector('.tab-btn[onclick="switchCalculator(\'upgrade\')"]');
             
             // Hide results when switching
             hideResults();
             
+            // Hide all forms first
+            powerForm.style.display = 'none';
+            tokenForm.style.display = 'none';
+            upgradeForm.style.display = 'none';
+            
+            // Remove active from all buttons
+            powerBtn.classList.remove('active');
+            tokenBtn.classList.remove('active');
+            upgradeBtn.classList.remove('active');
+            
+            // Show selected calculator
             if (type === 'power') {
                 powerForm.style.display = 'block';
-                tokenForm.style.display = 'none';
                 powerBtn.classList.add('active');
-                tokenBtn.classList.remove('active');
-            } else {
-                powerForm.style.display = 'none';
+            } else if (type === 'tokens') {
                 tokenForm.style.display = 'block';
                 tokenBtn.classList.add('active');
-                powerBtn.classList.remove('active');
+            } else if (type === 'upgrade') {
+                upgradeForm.style.display = 'block';
+                upgradeBtn.classList.add('active');
             }
+        }
+
+        // Format numbers with units for display
+        function formatNumberWithUnits(number) {
+            if (number < 10000) {
+                return number.toFixed(3);
+            }
+            
+            for (let i = POWER_UNITS.length - 1; i >= 0; i--) {
+                const unit = POWER_UNITS[i];
+                if (number >= unit.multiplier) {
+                    const value = number / unit.multiplier;
+                    return value.toFixed(3) + unit.display;
+                }
+            }
+            
+            return number.toFixed(3);
         }
 
         // Dropdown menus
         function populateDropdowns() {
-            const powerDropdowns = ['currentUnit', 'goalUnit', 'rateUnit'];
+            const powerDropdowns = ['currentUnit', 'goalUnit', 'rateUnit', 'powerUnit'];
             const tokenDropdowns = ['currentTokenUnit', 'goalTokenUnit', 'tokenRateUnit'];
             
             // Power calculator dropdowns
@@ -587,11 +635,18 @@
             document.getElementById('error').style.display = 'none';
         }
 
-        // Show results
+        // Show results for time calculations
         function showResults(timeInSeconds) {
             const resultsDiv = document.getElementById('results');
             const goalReachedDiv = document.getElementById('goalReached');
             const errorDiv = document.getElementById('error');
+            
+            // Show time result items, hide upgrade items
+            document.getElementById('timeSecondsItem').style.display = 'flex';
+            document.getElementById('timeHoursItem').style.display = 'flex';
+            document.getElementById('timeDaysItem').style.display = 'flex';
+            document.getElementById('timeFormattedItem').style.display = 'flex';
+            document.getElementById('upgradePointsItem').style.display = 'none';
             
             // Format results
             const timeSeconds = formatWithCommas(timeInSeconds);
@@ -604,6 +659,28 @@
             document.getElementById('timeHours').textContent = timeHours;
             document.getElementById('timeDays').textContent = timeDays;
             document.getElementById('timeFormatted').textContent = timeFormatted;
+            
+            // Show results
+            resultsDiv.classList.add('show');
+            goalReachedDiv.style.display = 'none';
+            errorDiv.style.display = 'none';
+        }
+
+        // Show results for upgrade calculations
+        function showUpgradeResults(upgradePoints) {
+            const resultsDiv = document.getElementById('results');
+            const goalReachedDiv = document.getElementById('goalReached');
+            const errorDiv = document.getElementById('error');
+            
+            // Hide time result items, show upgrade items
+            document.getElementById('timeSecondsItem').style.display = 'none';
+            document.getElementById('timeHoursItem').style.display = 'none';
+            document.getElementById('timeDaysItem').style.display = 'none';
+            document.getElementById('timeFormattedItem').style.display = 'none';
+            document.getElementById('upgradePointsItem').style.display = 'flex';
+            
+            // Format and update upgrade points
+            document.getElementById('upgradePoints').textContent = formatNumberWithUnits(upgradePoints);
             
             // Show results
             resultsDiv.classList.add('show');
@@ -728,6 +805,47 @@
             }
         }
 
+        // Calculate upgrade points using formula: TotalPower / 1Qn ^ 0.4
+        function calculateUpgradePoints() {
+            try {
+                hideError();
+                
+                // Get input values
+                const totalPower = parseFloat(document.getElementById('totalPower').value);
+                const powerUnit = document.getElementById('powerUnit').value;
+                
+                // Validate inputs
+                if (isNaN(totalPower)) {
+                    throw new Error('Please enter a valid number for total power.');
+                }
+                
+                if (totalPower < 0) {
+                    throw new Error('Total power must be a positive number.');
+                }
+                
+                // Convert to base value
+                const totalPowerBase = convertToBase(totalPower, powerUnit, POWER_UNITS);
+                
+                // 1Qn = 1e18
+                const oneQn = 1e18;
+                
+                // Check if power is less than 1Qn
+                if (totalPowerBase < oneQn) {
+                    throw new Error('Total power must be at least 1Qn to get upgrade points.');
+                }
+                
+                // Calculate upgrade points: TotalPower / 1Qn ^ 0.4
+                const ratio = totalPowerBase / oneQn;
+                const upgradePoints = Math.pow(ratio, 0.4);
+                
+                // Show results
+                showUpgradeResults(upgradePoints);
+                
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+
         // Initialize the application
         document.addEventListener('DOMContentLoaded', function() {
             populateDropdowns();
@@ -744,6 +862,12 @@
                 calculateTokenTime();
             });
 
+            // Handle upgrade calculator form submission
+            document.getElementById('upgradeCalculatorForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                calculateUpgradePoints();
+            });
+
             // Handle input changes for real-time validation
             document.querySelectorAll('input[type="number"]').forEach(input => {
                 input.addEventListener('input', function() {
@@ -758,11 +882,14 @@
                     // Calculate based on which form is currently visible
                     const powerForm = document.getElementById('powerCalculatorForm');
                     const tokenForm = document.getElementById('tokenCalculatorForm');
+                    const upgradeForm = document.getElementById('upgradeCalculatorForm');
                     
                     if (powerForm.style.display !== 'none') {
                         calculatePowerTime();
                     } else if (tokenForm.style.display !== 'none') {
                         calculateTokenTime();
+                    } else if (upgradeForm.style.display !== 'none') {
+                        calculateUpgradePoints();
                     }
                 }
             });
