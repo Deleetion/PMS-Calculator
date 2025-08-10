@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Leet's Power Masters Simulator Calculator</title>
+    <!-- Cache breaker: 1723311425 -->
     <style>
         * {
             margin: 0;
@@ -805,7 +806,7 @@
             }
         }
 
-        // Calculate upgrade points using formula: TotalPower / 1Qn ^ 0.4
+        // Calculate upgrade points using formula: TotalPower / 1Sx ^ 0.4
         function calculateUpgradePoints() {
             try {
                 hideError();
@@ -826,16 +827,16 @@
                 // Convert to base value
                 const totalPowerBase = convertToBase(totalPower, powerUnit, POWER_UNITS);
                 
-                // 1Qn = 1e18
-                const oneQn = 1e18;
+                // 1Sx = 1e21
+                const oneSx = 1e21;
                 
-                // Check if power is less than 1Qn
-                if (totalPowerBase < oneQn) {
-                    throw new Error('Total power must be at least 1Qn to get upgrade points.');
+                // Check if power is less than 1Sx
+                if (totalPowerBase < oneSx) {
+                    throw new Error('Total power must be at least 1Sx to get tree points.');
                 }
                 
-                // Calculate upgrade points: TotalPower / 1Qn ^ 0.4
-                const ratio = totalPowerBase / oneQn;
+                // Calculate tree points: TotalPower / 1Sx ^ 0.4 (updated formula)
+                const ratio = totalPowerBase / oneSx;
                 const upgradePoints = Math.pow(ratio, 0.4);
                 
                 // Show results
