@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Leet's Power Masters Simulator Calculator</title>
-    <!-- Cache breaker: 1723311425 -->
+
     <style>
         * {
             margin: 0;
@@ -225,6 +225,61 @@
             margin-top: 20px;
         }
 
+        /* Soul Point Notification Banner */
+        .soul-point-notice {
+            background: rgba(255, 255, 255, 0.08);
+            border-left: 4px solid #4fc3f7;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-top: 20px;
+            text-align: left;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: none;
+            animation: fadeInSlide 0.4s ease-out;
+        }
+
+        @keyframes fadeInSlide {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .soul-point-notice.show {
+            display: block;
+        }
+
+        .soul-point-notice .notice-content {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .soul-point-notice .notice-icon {
+            color: #4fc3f7;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .soul-point-notice p {
+            color: #e0e0e0;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            margin: 0;
+            font-weight: 400;
+        }
+
+        .soul-point-notice .highlight {
+            color: #4fc3f7;
+            font-weight: 500;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 20px;
@@ -331,7 +386,7 @@
             </div>
             <div style="display: flex; gap: 15px; justify-content: center;">
                 <button type="button" class="tab-btn" onclick="switchCalculator('tokens')">Token Calculator</button>
-                <button type="button" class="tab-btn" onclick="switchCalculator('upgrade')">Tree Point Calculator</button>
+                <button type="button" class="tab-btn" onclick="switchCalculator('upgrade')">Soul Points Calculator</button>
             </div>
         </div>
 
@@ -403,7 +458,9 @@
                 </div>
             </div>
 
-            <button type="submit" class="calculate-btn">Calculate Tree Points</button>
+
+
+            <button type="submit" class="calculate-btn">Calculate Soul Points</button>
         </form>
 
         <div id="results" class="results">
@@ -424,7 +481,7 @@
                 <span class="result-value" id="timeFormatted">-</span>
             </div>
             <div class="result-item" id="upgradePointsItem" style="display: none;">
-                <span class="result-label">Tree Points:</span>
+                <span class="result-label">Soul Points:</span>
                 <span class="result-value" id="upgradePoints">-</span>
             </div>
         </div>
@@ -435,10 +492,20 @@
 
         <div id="error" class="error" style="display: none;"></div>
 
+        <!-- Soul Point Notice Banner -->
+        <div id="soulPointNotice" class="soul-point-notice">
+            <div class="notice-content">
+                <span class="notice-icon">ℹ️</span>
+                <p>Your actual ingame Soul Points may be higher due to various multipliers and bonuses you have unlocked.</p>
+            </div>
+        </div>
+
         <div class="footer">
             <p>Made by Deleetion</p>
         </div>
     </div>
+
+
 
     <script>
         // Units and their multipliers for power or wtv
@@ -634,6 +701,7 @@
             document.getElementById('results').classList.remove('show');
             document.getElementById('goalReached').style.display = 'none';
             document.getElementById('error').style.display = 'none';
+            hideSoulPointNotice();
         }
 
         // Show results for time calculations
@@ -687,6 +755,9 @@
             resultsDiv.classList.add('show');
             goalReachedDiv.style.display = 'none';
             errorDiv.style.display = 'none';
+            
+            // Show notification banner for soul points calculation
+            showSoulPointNotice();
         }
 
         // Show goal reached message
@@ -832,19 +903,30 @@
                 
                 // Check if power is less than 1Sx
                 if (totalPowerBase < oneSx) {
-                    throw new Error('Total power must be at least 1Sx to get tree points.');
+                    throw new Error('Total power must be at least 1Sx to get Soul points.');
                 }
                 
-                // Calculate tree points: TotalPower / 1Sx ^ 0.4 (updated formula)
+                // Calculate soul points: TotalPower / 1Sx ^ 0.4 (updated formula)
                 const ratio = totalPowerBase / oneSx;
-                const upgradePoints = Math.pow(ratio, 0.4);
+                const soulPoints = Math.pow(ratio, 0.4);
                 
                 // Show results
-                showUpgradeResults(upgradePoints);
+                showUpgradeResults(soulPoints);
                 
             } catch (error) {
                 showError(error.message);
             }
+        }
+
+        // Soul Point Notice Functions
+        function showSoulPointNotice() {
+            const notice = document.getElementById('soulPointNotice');
+            notice.classList.add('show');
+        }
+
+        function hideSoulPointNotice() {
+            const notice = document.getElementById('soulPointNotice');
+            notice.classList.remove('show');
         }
 
         // Initialize the application
