@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Leet's Power Masters Simulator Calculator</title>
 
+
     <style>
         * {
             margin: 0;
@@ -722,6 +723,7 @@
                         option.textContent = unit.display;
                         dropdown.appendChild(option);
                     });
+
                 }
             });
 
@@ -910,9 +912,9 @@
                     return;
                 }
                 
-                // Calculate time needed
+                // Calculate time needed (0.8 seconds per power gain)
                 const difference = goalBase - currentBase;
-                const timeInSeconds = difference / rateBase;
+                const timeInSeconds = (difference / rateBase) * 0.8;
                 
                 // Validate result
                 if (timeInSeconds < 0 || !isFinite(timeInSeconds)) {
