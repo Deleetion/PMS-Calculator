@@ -417,6 +417,13 @@
                 </div>
             </div>
 
+            <div class="form-group">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" id="trainingSpeed" style="width: auto; margin: 0;">
+                    <label for="trainingSpeed" style="margin: 0; color: #4fc3f7; font-weight: 500;">Faster Training Speed (0.6s per tick)</label>
+                </div>
+            </div>
+
             <button type="submit" class="calculate-btn">Calculate Time</button>
         </form>
 
@@ -532,16 +539,16 @@
             { name: 'SpDe', multiplier: 1e54, display: 'SpDe' },
             { name: 'OcDe', multiplier: 1e57, display: 'OcDe' },
             { name: 'NoDe', multiplier: 1e60, display: 'NoDe' },
-            { name: 'Vt', multiplier: 1e63, display: 'Vt' },
-            { name: 'UVt', multiplier: 1e66, display: 'UVt' },
-            { name: 'DVt', multiplier: 1e69, display: 'DVt' },
-            { name: 'TVt', multiplier: 1e72, display: 'TVt' },
-            { name: 'QdVt', multiplier: 1e75, display: 'QdVt' },
-            { name: 'QnVt', multiplier: 1e78, display: 'QnVt' },
-            { name: 'SxVt', multiplier: 1e81, display: 'SxVt' },
-            { name: 'SpVt', multiplier: 1e84, display: 'SpVt' },
-            { name: 'OcVt', multiplier: 1e87, display: 'OcVt' },
-            { name: 'NoVt', multiplier: 1e90, display: 'NoVt' },
+            { name: 'Vt', multiplier: 1e63, display: 'Vg' },
+            { name: 'UVt', multiplier: 1e66, display: 'UVg' },
+            { name: 'DVt', multiplier: 1e69, display: 'DVg' },
+            { name: 'TVt', multiplier: 1e72, display: 'TVg' },
+            { name: 'QdVt', multiplier: 1e75, display: 'QdVg' },
+            { name: 'QnVt', multiplier: 1e78, display: 'QnVg' },
+            { name: 'SxVt', multiplier: 1e81, display: 'SxVg' },
+            { name: 'SpVt', multiplier: 1e84, display: 'SpVg' },
+            { name: 'OcVt', multiplier: 1e87, display: 'OcVg' },
+            { name: 'NoVt', multiplier: 1e90, display: 'NoVg' },
             { name: 'Tg', multiplier: 1e93, display: 'Tg' },
             { name: 'UTg', multiplier: 1e96, display: 'UTg' },
             { name: 'DTg', multiplier: 1e99, display: 'DTg' },
@@ -912,9 +919,11 @@
                     return;
                 }
                 
-                // Calculate time needed so uh i think i did this right im tired
+                // Calculate time needed - check for training speed
                 const difference = goalBase - currentBase;
-                const timeInSeconds = (difference / rateBase) * 0.8;
+                const isTrainingSpeed = document.getElementById('trainingSpeed').checked;
+                const tickDuration = isTrainingSpeed ? 0.6 : 0.8;
+                const timeInSeconds = (difference / rateBase) * tickDuration;
                 
                 // Validate result
                 if (timeInSeconds < 0 || !isFinite(timeInSeconds)) {
